@@ -3,7 +3,7 @@ from libGML.input.keyboard import Keyboard
 from libGML.core.world import World
 from libGML.graphics.transform import Transform
 from libGML.core.camera import Camera
-from libGML.core.vector2 import Vector2
+from libGML.core.ui import UI
 import pygame
 
 pygame.init()
@@ -16,8 +16,10 @@ sprites = Sprite()
 world = World(sc)
 transform = Transform()
 camera = Camera()
+ui = UI()
 
 speed = 5
+health = 100
 texture = sprites.load_texture("player_test.png").convert_alpha()
 
 test = sprites.create_sprite(100, 110, 32, 32)
@@ -27,10 +29,13 @@ mapL2 = world.load_room_csv("mapL2.csv")
 
 tileset = pygame.image.load("tileset.png").convert_alpha()
 atlas = sprites.cutTileSet(tileset, 16, 16)
+atlas = sprites.resizeTileset(atlas, 32, 32)
 
 testiruem = [sprites.load_texture("pl_up.png").convert_alpha(), sprites.load_texture("pl_down.png").convert_alpha(), sprites.load_texture("pl_side.png").convert_alpha()]
 
-blocked_tiles = ['4', '16', '97', '98', '99', '109', '110', '111', '121', '122', '123']
+blocked_tiles = ['42', '16', '97', '98', '99', '109', '110', '111', '121', '122', '123']
+
+world.add_interactable("4")
 
 key = 0
 
@@ -66,6 +71,8 @@ while True:
         new_test = sprites.move((dx, 0), test)
         if world.can_move_to(new_test, 32, blocked_tiles, mapL2):
             test = new_test
+    if world.check_interactables(test, mapL2, 32):
+        print("interactable")
 
     sc.fill((20, 20, 30))
 
@@ -77,8 +84,12 @@ while True:
     key = sprites.get_frame(testiruem, key, dt, delay=0.5)
     texture = testiruem[key]
 
+    lbl = ui.create_label(-15, -80, 100, 200, (255, 0, 0), f"HP: {health}")
+    fpsLbl = ui.create_label(710, -80, 100, 200, (255, 0, 0), f"FPS: {round(clock.get_fps())}")
+    ui.draw(sc)
+
     sprites.draw(sc, test, texture, camera)
 
     clock.tick(60)
-    pygame.display.set_caption(str(clock.get_fps()))
+    pygame.display.set_caption("Mushoku Tensei Naxui Blyat")
     pygame.display.flip()

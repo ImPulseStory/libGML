@@ -57,3 +57,9 @@ class Sprite:
                 tiles[f'{index}'] = tile
                 index += 1
         return tiles
+
+    def resizeTileset(self, atlas, width, height):
+        scaled_atlas = {}
+        for key, tile in atlas.items():
+            scaled_atlas[key] = pygame.transform.scale(tile, (width, height))
+        return scaled_atlas
